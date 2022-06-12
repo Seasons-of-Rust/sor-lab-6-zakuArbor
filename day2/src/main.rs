@@ -1,10 +1,10 @@
 use core::panic;
+use num_derive::FromPrimitive;
+use num_traits::FromPrimitive;
 use std::{
     fs::File,
     io::{BufRead, BufReader},
 };
-use num_derive::FromPrimitive;    
-use num_traits::FromPrimitive;
 
 #[derive(Copy, Clone, FromPrimitive)]
 enum OPCODE {
@@ -73,8 +73,7 @@ fn run(list: &mut [i32]) -> i32 {
         match FromPrimitive::from_i32(opcode) {
             Some(OPCODE::Add) => *answer_ref = a + b,
             Some(OPCODE::Mult) => *answer_ref = a * b,
-            _ => panic!("INVALID OPCODE. Crash and Burn")
-
+            _ => panic!("INVALID OPCODE. Crash and Burn"),
         };
         i += 4;
     }
