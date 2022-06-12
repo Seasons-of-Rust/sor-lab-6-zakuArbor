@@ -3,8 +3,10 @@ use std::{
     fs::File,
     io::{BufRead, BufReader},
 };
+use num_derive::FromPrimitive;    
+use num_traits::FromPrimitive;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, FromPrimitive)]
 enum OPCODE {
     Halt = 99,
     Add = 1,
@@ -68,14 +70,12 @@ fn run(list: &mut [i32]) -> i32 {
                 i
             ),
         };
+        match FromPrimitive::from_i32(opcode) {
+            Some(OPCODE::Add) => *answer_ref = a + b,
+            Some(OPCODE::Mult) => *answer_ref = a * b,
+            _ => panic!("INVALID OPCODE. Crash and Burn")
 
-        if OPCODE::Add.eq(&opcode) {
-            *answer_ref = a + b;
-        } else if OPCODE::Mult.eq(&opcode) {
-            *answer_ref = a * b;
-        } else {
-            panic!("INVALID OPCODE. Crash and Burn");
-        }
+        };
         i += 4;
     }
     *list.get(0).unwrap()
@@ -91,12 +91,11 @@ fn get_res_ref(list: &mut [i32], addr: usize) -> Option<&mut i32> {
         Some(val) => *val,
         _ => return None,
     };
-    //println!("get_res_ref: write index is {}", index);
     list.get_mut(index as usize)
 }
 
 /// given a position, will look at the position and traverse to the position to retrieve the value
-/// i.e. numbers[numbers[address]]
+/// i.e. &numbers[numbers[address]]
 fn get_val(list: &[i32], addr: usize) -> Option<&i32> {
     match list.get(addr) {
         Some(val) => list.get(*val as usize),
